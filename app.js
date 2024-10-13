@@ -1,11 +1,12 @@
 import express from 'express'
+
 import {getNotes, getNote, createNote } from './database.js'
 
 const app = express()
 
 app.get("/api/notes", async (req, res) => {
-    const notes = await getNotes()
-    res.send(notes)
+    /*const notes = await getNotes()*/
+    res.send('Ahoj Ondro')
 })
 
 
