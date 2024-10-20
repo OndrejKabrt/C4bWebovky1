@@ -7,21 +7,22 @@ const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
+    database: process.env.MYSQL_DATABASE,
+    port: process.env.MYSQL_PORT
 }).promise()
 
-async function getNotes(){
-    const [rows] =await Pool.query("SELECT * FROM notes")
+export async function getNotes(){
+    const [rows] =await pool.query("SELECT * FROM notes")
     console.log(rows)
 }
 
 
-async function getNote(id){
-    const [rows] =await Pool.query('SELECT *FROM notes Where id = ?', [id])
+export async function getNote(id){
+    const [rows] =await pool.query('SELECT *FROM notes Where id = ?', [id])
     return rows
 }
 
-async function createNote(title, content) {
+export async function createNote(title, content) {
     const result = await pool.query('INSERT INTO notes (title, contents) VALUES (?,?)'[title, content])
     return {
         id
@@ -29,7 +30,5 @@ async function createNote(title, content) {
 }
 
 
-
-
-const notes = await getNote()
+const notes = await getNotes()
 console.log(notes)
