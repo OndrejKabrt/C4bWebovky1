@@ -12,8 +12,8 @@ const pool = mysql.createPool({
 }).promise()
 
 export async function getNotes(){
-    const [rows] =await pool.query("SELECT * FROM notes")
-    console.log(rows)
+    const [rows] = await pool.query("SELECT * FROM notes")
+    return (rows)
 }
 
 
@@ -22,13 +22,13 @@ export async function getNote(id){
     return rows
 }
 
-export async function createNote(title, content) {
-    const result = await pool.query('INSERT INTO notes (title, contents) VALUES (?,?)'[title, content])
-    return {
-        id
-    }
+export async function createNote(title, contents) {
+    const [result] = await pool.query('INSERT INTO notes (title, contents) VALUES (?,?)',[title, contents])
+    const id = result.insertId
+    return getNote(id)
+    
 }
 
 
-const notes = await getNotes()
+export const notes = await getNotes()
 console.log(notes)
