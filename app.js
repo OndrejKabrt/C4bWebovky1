@@ -2,16 +2,19 @@ import express from 'express'
 
 import {getNotes, getNote, createNote } from './database.js'
 
+
 const app = express()
 
 app.use(express.json())
+
+/*app.use(cors());*/
 
 app.get("/api/notes", async (req, res) => {
     const notes = await getNotes()
     res.send(notes)
 })
 
-app.get("/api/notes/:id", async(req, res) =>{
+app.get("/api/note/:id", async(req, res) =>{
     const id = req.params.id
     const note = await getNote(id)
     res.send(note)

@@ -19,7 +19,7 @@ export async function getNotes(){
 
 export async function getNote(id){
     const [rows] =await pool.query('SELECT *FROM notes Where id = ?', [id])
-    return rows
+    return rows[0]
 }
 
 export async function createNote(title, contents) {
@@ -30,5 +30,5 @@ export async function createNote(title, contents) {
 }
 
 
-export const notes = await getNotes()
-console.log(notes)
+/*const result  = await createNote('Third blog', 'Some nonsense from me')
+console.log(result)*/
