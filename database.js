@@ -18,7 +18,7 @@ export async function getNotes(){
 
 
 export async function getNote(id){
-    const [rows] =await pool.query('SELECT *FROM notes Where id = ?', [id])
+    const [rows] =await pool.query('SELECT * FROM notes Where id = ?', [id])
     return rows[0]
 }
 
@@ -26,8 +26,60 @@ export async function createNote(title, contents) {
     const [result] = await pool.query('INSERT INTO notes (title, contents) VALUES (?,?)',[title, contents])
     const id = result.insertId
     return getNote(id)
-    
 }
+
+
+export async function getUserList(){
+    const [rows] = await pool.query("SELECT * FROM user")
+    return (rows)
+}
+
+
+export async function getUser(id){
+    const [rows] =await pool.query('SELECT * FROM user Where id = ?', [id])
+    return rows[0]
+}
+
+
+export async function getNoteBytitle(title){
+    const [rows] =await pool.query('SELECT * FROM notes Where title = ?', [title])
+    return rows[0]
+}
+
+
+
+export async function createUser(username, password) {
+    const [result] = await pool.query('INSERT INTO user (username, password) VALUES (?,?)',[username, password])
+    const id = result.insertId
+    return getNote(id)
+}
+
+
+export async function deletePost(id){
+    const [rows] =await pool.query('DELETE FROM notes Where id = ?', [id])
+    return rows[0]
+}
+
+
+export async function deleteUser(id){
+    const [rows] =await pool.query('DELETE FROM user Where id = ?', [id])
+    return rows[0]
+}
+
+
+
+export async function updatePost(id,content){
+    const [rows] =await pool.query('UPDATE notes SET contents = ? Where id = ?', [content,id])
+    return rows[0]
+}
+
+export async function updateUser(id,username){
+    const [rows] =await pool.query('UPDATE user SET username = ? Where id = ?', [username,id])
+    return rows[0]
+}
+
+ 
+ 
 
 
 /*const result  = await createNote('Third blog', 'Some nonsense from me')
