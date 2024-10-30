@@ -1,16 +1,21 @@
-import express from 'express'
+import express from 'express';
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 
 import {getNotes, getNote, createNote, getUserList, getUser , getNoteBytitle,
-     createUser, deletePost, deleteUser, updatePost, updateUser} from './database.js'
+     createUser, deletePost, deleteUser, updatePost, updateUser} from './database.js';
 
+
+const docYaml = YAML.load("./api.yaml");
 
 const app = express()
 
 app.use(express.json())
+app.use("/api/about", swaggerUi.serve, swaggerUi.setup(docYaml));
 
 /*app.use(cors());*/
 
-app.get("/api/notes", async (req, res) => {
+app.get("/api/notes", async (req, res, next) => {
     try{
         const notes = await getNotes()
         res.send(notes)
@@ -21,7 +26,7 @@ app.get("/api/notes", async (req, res) => {
     
 })
 
-app.get("/api/note/:id", async(req, res) =>{
+app.get("/api/note/:id", async(req, res, next) =>{
     try{
     const id = req.params.id
     const note = await getNote(id)
@@ -32,7 +37,7 @@ app.get("/api/note/:id", async(req, res) =>{
     }
 })
 
-app.post("/api/notes", async (req, res) =>{
+app.post("/api/notes", async (req, res, next) =>{
     try{
     const {title, contents} = req.body
     const note = await createNote(title, contents)
@@ -49,7 +54,7 @@ app.post("/api/notes", async (req, res) =>{
     "contents" : "I have done this"
 }*/
 
-app.get("/api/users", async (req, res) => {
+app.get("/api/users", async (req, res, next) => {
     try{
     const users = await getUserList()
     res.send(users)
@@ -59,7 +64,7 @@ app.get("/api/users", async (req, res) => {
     }
 })
 
-app.get("/api/user/:id", async(req, res) =>{
+app.get("/api/user/:id", async(req, res, next) =>{
     try{
     const id = req.params.id
     const user = await getUser(id)
@@ -70,7 +75,7 @@ app.get("/api/user/:id", async(req, res) =>{
     }
 })
 
-app.get("/api/note/:title", async(req, res) =>{
+app.get("/api/note/:title", async(req, res, next) =>{
     try{
     const title = req.params.title
     const note = await getNoteBytitle(title)
@@ -81,7 +86,7 @@ app.get("/api/note/:title", async(req, res) =>{
     }
 })
 
-app.post("/api/user", async (req, res) =>{
+app.post("/api/user", async (req, res, next) =>{
     try{
     const {username, password} = req.body
     const note = await createUser(username, password)
@@ -92,29 +97,32 @@ app.post("/api/user", async (req, res) =>{
     }
 })
 
-app.delete("/api/post/:id", async (req,res) => {
+app.delete("/api/post/:id", async (req,res, next) => {
     try{
     const id = req.params.id
     const response = await deletePost(id)
-    res.send(response)
+    if (response > 0)res.status(200).send("");
+    else res.status(404).send("Not found");
     }
     catch (e){
         next(e)
     }
 })
 
-app.delete("/api/user/:id", async (req,res) => {
+app.delete("/api/user/:id", async (req,res, next) => {
     try{
     const id = req.params.id
     const response = await deleteUser(id)
-    res.send(response)
+    if (response > 0)res.status(200).send("");
+    else res.status(404).send("Not found");
+
     }
     catch (e){
         next(e)
     }
 })
 
-app.patch("/api/post" , async (req, res) => {
+app.patch("/api/post" , async (req, res, next) => {
     try{
     const {id, content} = req.body
     const note = await updatePost(id, content)
@@ -125,7 +133,7 @@ app.patch("/api/post" , async (req, res) => {
     }
 })
 
-app.patch("/api/user" , async (req, res) => {
+app.patch("/api/user" , async (req, res, next) => {
     try{
     const {id, content} = req.body
     const note = await updateUser(id, content)
