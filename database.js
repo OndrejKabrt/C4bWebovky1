@@ -78,9 +78,9 @@ export async function updateUser(id,username){
     return rows[0]
 }
 
- 
- 
-
-
-/*const result  = await createNote('Third blog', 'Some nonsense from me')
-console.log(result)*/
+export async function CheckUser(username,password){
+    let result = await pool.query("select password,id from user where username = ?;", [username]);
+    console.log(result)
+	if (result[0].length <= 0) return 0;
+	return result[0][0]["id"];
+}

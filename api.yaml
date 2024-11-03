@@ -1,16 +1,16 @@
 openapi: 3.0.0
 info:
   title: Notes API
+  description: API for managing notes and users.
   version: 1.0.0
-  description: API for managing notes and users
 servers:
-  - url: http://localhost:8080/api
+  - url: http://localhost:8080
 paths:
-  notes:
+  /api/notes:
     get:
       summary: Get all notes
       responses:
-        '200':
+        200:
           description: A list of notes
           content:
             application/json:
@@ -20,7 +20,7 @@ paths:
                   type: object
                   properties:
                     id:
-                      type: integer
+                      type: string
                     title:
                       type: string
                     contents:
@@ -39,7 +39,7 @@ paths:
                 contents:
                   type: string
       responses:
-        '201':
+        201:
           description: Note created successfully
           content:
             application/json:
@@ -47,49 +47,23 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: integer
+                    type: string
                   title:
                     type: string
                   contents:
                     type: string
-
-  /note/{id}:
+  /api/note/{id}:
     get:
       summary: Get a note by ID
       parameters:
         - name: id
           in: path
           required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: A note object
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  title:
-                    type: string
-                  contents:
-                    type: string
-        '404':
-          description: Note not found
-
-  /note/{title}:
-    get:
-      summary: Get a note by title
-      parameters:
-        - name: title
-          in: path
-          required: true
+          description: The ID of the note
           schema:
             type: string
       responses:
-        '200':
+        200:
           description: A note object
           content:
             application/json:
@@ -97,19 +71,61 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: integer
+                    type: string
                   title:
                     type: string
                   contents:
                     type: string
-        '404':
+        404:
           description: Note not found
-
-  /users:
-    get:
-      summary: Get all users
+    delete:
+      summary: Delete a note by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the note to delete
+          schema:
+            type: string
       responses:
-        '200':
+        200:
+          description: Note deleted successfully
+        404:
+          description: Note not found
+    patch:
+      summary: Update a note
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                content:
+                  type: string
+      responses:
+        200:
+          description: Note updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  contents:
+                    type: string
+        404:
+          description: Note not found
+  /api/users:
+    get:
+      summary: Get a list of users
+      responses:
+        200:
           description: A list of users
           content:
             application/json:
@@ -119,116 +135,9 @@ paths:
                   type: object
                   properties:
                     id:
-                      type: integer
+                      type: string
                     username:
                       type: string
-
-  /user/{id}:
-    get:
-      summary: Get a user by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: A user object
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  username:
-                    type: string
-        '404':
-          description: User not found
-
-    delete:
-      summary: Delete a user by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: User deleted successfully
-        '404':
-          description: User not found
-
-  /post/{id}:
-    delete:
-      summary: Delete a post by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Post deleted successfully
-        '404':
-          description: Post not found
-
-    patch:
-      summary: Update a post
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                content:
-                  type: string
-      responses:
-        '200':
-          description: Post updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  content:
-                    type: string
-
-  /user:
-    patch:
-      summary: Update a user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                content:
-                  type: string
-      responses:
-        '200':
-          description: User updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  content:
-                    type: string
-                    
     post:
       summary: Create a new user
       requestBody:
@@ -243,7 +152,7 @@ paths:
                 password:
                   type: string
       responses:
-        '201':
+        201:
           description: User created successfully
           content:
             application/json:
@@ -251,6 +160,57 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: integer
+                    type: string
                   username:
                     type: string
+  /api/user/{id}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: string
+      responses:
+        200:
+          description: A user object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+        404:
+          description: User not found
+    patch:
+      summary: Update a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                content:
+                  type: string
+      responses:
+        200:
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+        404:
+          description: User not found

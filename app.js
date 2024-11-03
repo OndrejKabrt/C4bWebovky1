@@ -3,7 +3,7 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 
 import {getNotes, getNote, createNote, getUserList, getUser , getNoteBytitle,
-     createUser, deletePost, deleteUser, updatePost, updateUser} from './database.js';
+     createUser, deletePost, deleteUser, updatePost, updateUser,CheckUser} from './database.js';
 
 
 const docYaml = YAML.load("./api.yaml");
@@ -49,11 +49,6 @@ app.post("/api/notes", async (req, res, next) =>{
 
 })
 
-/*{ Ukazka vstupu pro pridani notu
-    "title" : "Z thunderclienta",
-    "contents" : "I have done this"
-}*/
-
 app.get("/api/users", async (req, res, next) => {
     try{
     const users = await getUserList()
@@ -97,30 +92,29 @@ app.post("/api/user", async (req, res, next) =>{
     }
 })
 
-app.delete("/api/post/:id", async (req,res, next) => {
-    try{
-    const id = req.params.id
-    const response = await deletePost(id)
-    if (response > 0)res.status(200).send("");
-    else res.status(404).send("Not found");
+app.delete("/api/post/:id",async(req,res) => {
+    const id =req.params.id;
+    const {username,password} = req.body;
+    if(!await getNote(id)){
+        return res.status(404).send({ message: "Blog not found" });
     }
-    catch (e){
-        next(e)
+    /* #Z kodu Adama Hlavačika 
+if(await IsAdmin(username,password) >= 1){
+ await deletePost(id) return res.status(200).send({message: "Blog deleted successfully"})
+}
+  const user_id = await GetBlogUser(id); if(await CheckUser(username,password) != user_id)
+  { 
+  return res.status(403).send({message: "Not allowed"}) 
+  } 
+  */ 
+    
+    else{
+        await deletePost(id)
+        return res.status(200).send({message: "Blog deleted successfully"})
     }
+    
 })
 
-app.delete("/api/user/:id", async (req,res, next) => {
-    try{
-    const id = req.params.id
-    const response = await deleteUser(id)
-    if (response > 0)res.status(200).send("");
-    else res.status(404).send("Not found");
-
-    }
-    catch (e){
-        next(e)
-    }
-})
 
 app.patch("/api/post" , async (req, res, next) => {
     try{
@@ -153,5 +147,12 @@ app.use((err, req, res, next) => {
 app.listen(8080, () => {
     return('Server is running on port 8080')
 })
+
+  /* app.delete("/api/user/:id", async (req,res, next) => {
+    try{ const id = req.params.id
+    const response = await deleteUser(id) 
+    if (response > 0)res.status(200).send(""); 
+    else res.status(404).send("Not found"); } 
+    catch (e){ next(e) } }) */
 
 /*pro spusteni zadej node app.js*/
