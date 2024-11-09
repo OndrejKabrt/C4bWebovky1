@@ -148,6 +148,7 @@ app.listen(8080, () => {
     return('Server is running on port 8080')
 })
 
+
   /* app.delete("/api/user/:id", async (req,res, next) => {
     try{ const id = req.params.id
     const response = await deleteUser(id) 
